@@ -87,18 +87,6 @@ clean_egg<-raw_prawn%>%
 #it to numeric.
 clean_egg$egg.volume..mm.3. <- 
   as.numeric(as.character(clean_egg$egg.volume..mm.3.))
-
-#Plotting egg volume, first a histogram to look at the distribution of the data
-ggplot(data=clean_egg,(aes(x=egg.volume..mm.3.))) +
-  geom_histogram() +
-  theme_classic()
-
-#Now let's see what a scatter plot will show
-ggplot(data=clean_egg,(aes(x=total_length.mm.,egg.volume..mm.3.))) +
-  geom_point() +
-  geom_smooth(color="steelblue",method=lm) +
-  labs(x="Total Length (mm)",y="Egg Volume (mm3)") +
-  theme_classic()
 ```
 
 
@@ -209,8 +197,8 @@ plot_c_t <- ggplot(raw_prawn, (aes(x=log_t_length, y=log_carapace))) +
   geom_abline(intercept=-1.45070,slope=1.04650, colour="green",linewidth=0.8) +
   geom_abline(intercept=-1.45070, slope=1.007174, colour="grey")+
   geom_abline (intercept=-1.45070, slope=1.085835, colour="grey") +
-  scale_x_continuous(expand = c(0, 0), limits = c(4, 5.5)) +
-  scale_y_continuous(expand = c(0, 0), limits = c(2.5, 4)) +
+  scale_x_continuous(expand = c(0, 0), limits = c(4.2, 5.3)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(2.7, 4)) +
   xlab("Ln(total length)") +
   ylab("Ln(carapace length)") +
   theme_classic()
@@ -237,35 +225,24 @@ plot_c_a <- ggplot(raw_prawn, (aes(x=log_abdomen, y=log_carapace))) +
   geom_abline(intercept=-1.48653,slope=1.13218, colour="purple",linewidth=0.8) +
   geom_abline(intercept=-1.48653, slope=1.083341, colour="grey")+
   geom_abline (intercept=-1.48653, slope=1.181016, colour="grey") +
-  scale_x_continuous(expand = c(0, 0), limits = c(3.5, 5.5)) +
+  scale_x_continuous(expand = c(0, 0), limits = c(3.75, 5.25)) +
   scale_y_continuous(expand = c(0, 0), limits = c(2.5, 4.5)) +
   xlab("Ln(abdomen length)") +
   ylab("Ln(carapace length)") +
   theme_classic()
   plot_c_a
   
-#Plotting egg volume vs total length 
-plot_v_t <- ggplot(clean_egg, (aes(x=log_t_length, y=log_volume))) + 
-  geom_point() +
-  geom_abline(intercept=-5.1187,slope=3, colour="red",linewidth=0.8) + 
-  geom_abline(intercept=-5.1187,slope=2.8741, colour="yellow",linewidth=0.8) +
-  geom_abline(intercept=-5.1187, slope=1.420228, colour="grey")+
-  geom_abline (intercept=-5.1187, slope=4.327971, colour="grey") +
-  scale_x_continuous(expand = c(0, 0), limits = c(0, 15)) +
-  scale_y_continuous(expand = c(0, 0), limits = c(0, 15)) +
-  xlab("Ln(total length)") +
-  ylab("Ln(egg volume)") +
-  theme_classic()
-  plot_v_t
-
-#Combining these 4 plots into one multi-panel plot  
-multi_panel <-plot_grid(plot_c_t, plot_a_t, plot_c_a, plot_v_t,
-        labels=c('A','B','C','D'),
-    label_x=0.15)
+#Combining these 3 plots into one multi-panel plot  
+multi_panel <-plot_grid(plot_c_t, plot_a_t, plot_c_a,
+        labels=c('A','B','C'),
+    label_x=0.15,
+    ncol=1, 
+    align="v",
+    rel_heights=c(1,1,1))
 multi_panel
 
 #Saving this figure to be used in our paper 
-ggsave("Paper_figures/Figure_3.png", plot = multi_panel, width = 10, height = 6, dpi = 300)
+ggsave("Paper_figures/Figure_3.png", plot = multi_panel, width = 7, height = 15, dpi = 300)
 ```
 
 ##**Comparing Sizes Between Wizard and Weld**
@@ -327,14 +304,16 @@ summary(glm_weight)
 site_t.length <- ggplot(raw_prawn,aes(x=site,y=total_length.mm., fill=site)) +
   geom_boxplot() +
   labs(x="Site", y="Total Length (mm)") +
-  theme_classic()
+  theme_classic() +
+  theme(legend.position="none")
 site_t.length
 
 #Making a boxplot to compare weight by site 
 site_weight <- ggplot(raw_prawn, aes(x=site, y=weight.g., fill=site))+
   geom_boxplot() +
   labs(x="Site",y="Weight (g)") +
-  theme_classic()
+  theme_classic() + 
+   theme(legend.position ="none") 
 site_weight
 
 #Combining the weight and total length boxplots into one figure 
