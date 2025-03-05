@@ -103,7 +103,19 @@ ggplot(data=clean_egg,(aes(x=total_length.mm.,egg.volume..mm.3.))) +
 
 
 ##**Linear Models to Determine Allometry/Isometry**
+
 ```{r}
+##### Changing data to now show males (=0) and females (=1)
+raw_prawn$sex <- factor(raw_prawn$sex, levels = c(0,2), labels = c("Male","Female"))
+
+####Transforming to log transform data 
+raw_prawn$log_abdomen <- log(raw_prawn$abdominal_length.mm.)
+raw_prawn$log_t_length <- log(raw_prawn$total_length.mm.)
+raw_prawn$log_carapace <- log(raw_prawn$carapace_length.mm.)
+raw_prawn$log_weight <- log(raw_prawn$weight.g.)
+clean_egg$log_volume <- log(clean_egg$egg.volume..mm.3.)
+clean_egg$log_t_length <- log(clean_egg$total_length.mm.)
+
 #Running shapiro tests to determine if each of our log-transformed variables are 
 #normally distributed across both sites, to see it linear models might work  
 shapiro.test(raw_prawn$log_t_length)
@@ -123,9 +135,9 @@ qqline(raw_prawn$log_abdomen)
 hist(raw_prawn$log_abdomen)
 
 shapiro.test(clean_egg$log_volume)
-qqnorm(clean_egg$log_abdomen) 
-qqline(clean_egg$log_abdomen)
-hist(clean_egg$log_abdomen)
+qqnorm(clean_egg$log_volume) 
+qqline(clean_egg$log_volume)
+hist(clean_egg$log_volume)
 #All of these variables have p-value >0.05, so are normally distributed across 
 #all of our data 
 ```
