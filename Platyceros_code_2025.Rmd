@@ -302,8 +302,8 @@ shapiro.test(wizard_prawn$log_abdomen)
 qqnorm(wizard_prawn$log_abdomen) 
 qqline(wizard_prawn$log_abdomen)
 hist(wizard_prawn$log_abdomen)
-#All of these variables have p-value >0.05, so are normally distributed across 
-#all of our data 
+#All of these variables have p-value >0.05, so are residuals are normally 
+#distributed accross all of our data 
 ```
 
 ##**Making Linear Models for Separated Populations**
