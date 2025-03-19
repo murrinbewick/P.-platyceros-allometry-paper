@@ -94,8 +94,8 @@ clean_egg$egg.volume..mm.3. <-
 ##**Linear Models to Determine Allometry/Isometry**
 
 ```{r}
-##### Changing data to now show males (=0) and females (=1)
-raw_prawn$sex <- factor(raw_prawn$sex, levels = c(0,2), labels = c("Male","Female"))
+##### Changing data to now show males (=0) and females (=2)
+##raw_prawn$sex <- factor(raw_prawn$sex, levels = c(0,2), labels = c("1","2"))
 
 ####Transforming to log transform data 
 raw_prawn$log_abdomen <- log(raw_prawn$abdominal_length.mm.)
@@ -626,6 +626,14 @@ prawn_coords_raw$eastward_velocity <- raster::extract(
 ```
 
 
+```{r}
+############### COMPARING LENGTHS BETWEEN MALE AND FEMALE #############
+ggplot(raw_prawn, aes(x=sex, y=carapace_length.mm., fill=site))+
+  geom_boxplot() +
+  labs(x="Sex",y="Carapace Length (mm)") +
+  theme_classic() + 
+   theme(legend.position ="none") 
+```
 
 
 
