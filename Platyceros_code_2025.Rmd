@@ -628,11 +628,46 @@ prawn_coords_raw$eastward_velocity <- raster::extract(
 
 ```{r}
 ############### COMPARING LENGTHS BETWEEN MALE AND FEMALE #############
-ggplot(raw_prawn, aes(x=sex, y=carapace_length.mm., fill=site))+
+mf_prawn <- read.csv(file = here("mf_prawn.csv"))
+
+######### carapace
+sex_c<-ggplot(mf_prawn, aes(x = sex, y = carapace_length.mm., fill = sex)) +
   geom_boxplot() +
-  labs(x="Sex",y="Carapace Length (mm)") +
-  theme_classic() + 
-   theme(legend.position ="none") 
+  labs(x = "", y = "Carapace Length (mm)") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c("Male" = "yellow", "Female" = "red"))
+sex_c
+
+######### abdominal
+sex_a<-ggplot(mf_prawn, aes(x = sex, y = abdominal_length.mm., fill = sex)) +
+  geom_boxplot() +
+  labs(x = "", y = "Abdominal Length (mm)") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c("Male" = "yellow", "Female" = "red"))
+sex_a
+
+######### total length
+sex_t<-ggplot(mf_prawn, aes(x = sex, y = carapace_length.mm., fill = sex)) +
+  geom_boxplot() +
+  labs(x = "", y = "Total Length (mm)") +
+  theme_classic() +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = c("Male" = "yellow", "Female" = "red"))
+sex_t
+
+#Combining the length boxplots into one figure 
+sex_hist <-plot_grid(sex_a,sex_c,sex_t, 
+        labels=c('A','B','C'), nrow=1,
+    label_x=0.2)
+sex_hist
+
+#Saving this figure to use in our paper 
+ggsave("Paper_figures/Figure_sex.png", plot = sex_hist, 
+      width = 10, height = 6, dpi = 300)
+
+
 ```
 
 
