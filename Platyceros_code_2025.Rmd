@@ -25,6 +25,7 @@ library(rstatix)
 library(readxl) 
 library(rnaturalearth)
 library(ggspatial)
+library(gridExtra)
 ```
 ```{r}
 #Read in raw prawn data 
@@ -667,8 +668,48 @@ sex_hist
 ggsave("Paper_figures/Figure_sex.png", plot = sex_hist, 
       width = 10, height = 6, dpi = 300)
 
-
 ```
+
+```{r}
+############# ANCOVA ANALYSIS ####################
+
+#### creating a new dataframe to get abdomen/carapace ratio in male/female dataframe
+### covariate = total length
+### dependent variable = ratio
+
+mf_ratio<-mf_prawn %>%
+  mutate(abdomen_carapace_ratio = abdominal_length.mm./carapace_length.mm.)
+
+#### summary statistics for dependent variable abdomen/carapace ratio
+mf_ratio %>%
+  group_by(sex) %>%
+  get_summary_stats(abdomen_carapace_ratio, type= "common")
+
+#### summary stats for covariate TOTAL
+mf_ratio %>%
+  group_by(sex) %>%
+  get_summary_stats(total_length.mm., type= "common")
+
+
+##### visualizing the dataset
+p1 <- ggplot(mf_ratio, aes(total_length.mm., abdomen_carapace_ratio, colour = sex)) +
+  geom_point(size=3) +
+  theme(legend.position = "top")
+p2 <- ggplot(mf_ratio, aes(x = sex, y = abdomen_carapace_ratio, colour = sex)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2) +
+  theme(legend.position = "top")
+p3 <- ggplot(mf_ratio, aes(x = sex, y = total_length.mm., fill = sex)) +
+  geom_boxplot(outlier.shape = NA) +
+  geom_jitter(width = 0.2) +
+  theme(legend.position = "top")
+grid.arrange(p1,p2,p3, ncol=3)
+
+#### one-way ANCOVA test
+
+anova_test(data = mf_ratio, formula = abdomen_carapace_ratio ~ total_length.mm. + sex, type = 3, detailed = TRUE) ###type 3 SS = ANCOVA
+```
+
 
 
 
