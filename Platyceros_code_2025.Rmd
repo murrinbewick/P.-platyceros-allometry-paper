@@ -723,6 +723,16 @@ summary(mod)
 ```
 
 
+```{r}
+total_ac_ratio<-ggplot(mf_ratio, aes(x = abdomen_carapace_ratio, y = total_length.mm., color = sex)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  labs(x = "Abdomen:Carapace ratio", y = "Total Length (mm)", Color = "Sex") +
+  theme_classic() 
+
+ggsave("Paper_figures/Figure_total_acratio.png", plot = total_ac_ratio, 
+     width = 10, height = 6, dpi = 300)
+```
 
 
 
