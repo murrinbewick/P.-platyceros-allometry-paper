@@ -666,7 +666,7 @@ sex_hist
 
 #Saving this figure to use in our paper 
 ##ggsave("Paper_figures/Figure_sex.png", plot = sex_hist, 
-      width = 10, height = 6, dpi = 300)
+     ## width = 10, height = 6, dpi = 300)
 
 ```
 
@@ -714,6 +714,11 @@ anova_test(data = mf_ratio, formula = abdomen_carapace_ratio ~ total_length.mm. 
 ```{r}
 ################# LM for how A:C ratio varies with total length and sex (???) ###############
 mod <- lm(abdomen_carapace_ratio ~ total_length.mm. * sex, data = mf_ratio) 
+summary(mod)
+```
+```{r}
+############## Simplified LM since interaction term (total - sex) is insignificant ############
+mod_simple <- lm(abdomen_carapace_ratio ~ total_length.mm. + sex, data = mf_ratio)
 summary(mod)
 ```
 
