@@ -307,101 +307,6 @@ hist(wizard_prawn$log_abdomen)
 #distributed accross all of our data 
 ```
 
-##**Making Linear Models for Separated Populations**
-```{r}
-##WELD ISLAND 
-
-#Linear model for carapace vs total length
-weld_ct = lm(log_carapace~log_t_length, data=weld_prawn)
-plot(weld_ct)
-plot(simulateResiduals(weld_ct))
-#Residuals are normal so assumptions for a liner model are met
-summary(weld_ct)
-cl95 <-confint(weld_ct)
-cl95
-
-#Linear model for abdomen vs total length 
-weld_at = lm(log_abdomen~log_t_length, data=weld_prawn)
-plot(weld_at)
-plot(simulateResiduals(weld_at))
-#Residuals are not normal so we have to try a glm 
-glm_weld_at <-glmmTMB(log_abdomen~log_t_length, data=weld_prawn,
-                      family=t_family())
-plot(simulateResiduals(glm_weld_at))
-#model now has normal residuals with the t_family
-summary(glm_weld_at) 
-cl95<-confint(glm_weld_at)
-cl95
-
-#Linear model for carapace vs abdomen 
-weld_ca = lm(log_carapace~log_abdomen, data=weld_prawn)
-plot(simulateResiduals(weld_ca))
-#residuals are not normal so we try a glm 
-glm_weld_ca <-glmmTMB(log_carapace~log_abdomen, data=weld_prawn,
-                      family=skewnormal())
-plot(simulateResiduals(glm_weld_ca))
-##NONE OF THE GLM FAMILIES WORKED - TRY A GAM??
-
-```
-
-```{r}
-##WIZARD ISLAND 
-
-#Linear model for abdomen vs total length 
-wizard_at= lm(log_abdomen~log_t_length, data=wizard_prawn)
-plot(wizard_at)
-plot(simulateResiduals(wizard_at))
-#Residuals are not normal so we have to try a glm 
-glm_wizard_at <-glmmTMB(log_abdomen~log_t_length, data=wizard_prawn,
-                      family=t_family())
-plot(simulateResiduals(glm_wizard_at))
-#model now has normal residuals with the t_family
-summary(glm_wizard_at) 
-
-
-#Linear model for carapace vs abdomen 
-wizard_ca = lm(log_carapace~log_abdomen, data=wizard_prawn)
-plot(simulateResiduals(wizard_ca))
-#residuals are normal so assumptions are met
-summary(wizard_ca)
-cl95 <-confint(wizard_ca)
-cl95
-
-
-#Linear model for carapace vs total length
-wizard_ct = lm(log_carapace~log_t_length, data=wizard_prawn)
-plot(wizard_ct)
-plot(simulateResiduals(wizard_ct))
-#Residuals are not normal so we try a glm 
-glm_wizard_ct <-glmmTMB(log_carapace~log_t_length, data=wizard_prawn,
-                        family = tweedie())
-plot(simulateResiduals(glm_wizard_ct))
-
-
-#NONE OF THE GLM FAMILIES WORKED - TRY A GAM??
-
-library(goft)
-library(gamlss)
-
-gam_NO <- gamlss(log_carapace ~ log_t_length, 
-                       family = NO, 
-                       data = wizard_prawn)
-
-gam_GA <- gamlss(log_carapace ~ log_t_length, 
-                       family = GA, 
-                       data = wizard_prawn)
-
-gam_IG <- gamlss(log_carapace ~ log_t_length, 
-                       family = IG, 
-                       data = wizard_prawn)
-
-gam_LN <- gamlss(log_carapace ~ log_t_length, 
-                       family = LN, 
-                       data = wizard_prawn)
-M
-
-```
-
 
 
 ##**Comparing Sizes Between Wizard and Weld**
@@ -627,89 +532,6 @@ prawn_coords_raw$eastward_velocity <- raster::extract(
 ```
 
 
-```{r}
-############### COMPARING LENGTHS BETWEEN MALE AND FEMALE #############
-mf_prawn <- read.csv(file = here("mf_prawn.csv"))
-
-######### carapace
-sex_c<-ggplot(mf_prawn, aes(x = sex, y = carapace_length.mm., fill = sex)) +
-  geom_boxplot() +
-  labs(x = "", y = "Carapace Length (mm)") +
-  theme_classic() +
-  theme(legend.position = "none") +
-  scale_fill_manual(values = c("Male" = "yellow", "Female" = "red"))
-sex_c
-
-######### abdominal
-sex_a<-ggplot(mf_prawn, aes(x = sex, y = abdominal_length.mm., fill = sex)) +
-  geom_boxplot() +
-  labs(x = "", y = "Abdominal Length (mm)") +
-  theme_classic() +
-  theme(legend.position = "none") +
-  scale_fill_manual(values = c("Male" = "yellow", "Female" = "red"))
-sex_a
-
-######### total length
-sex_t<-ggplot(mf_prawn, aes(x = sex, y = carapace_length.mm., fill = sex)) +
-  geom_boxplot() +
-  labs(x = "", y = "Total Length (mm)") +
-  theme_classic() +
-  theme(legend.position = "none") +
-  scale_fill_manual(values = c("Male" = "yellow", "Female" = "red"))
-sex_t
-
-#Combining the length boxplots into one figure 
-sex_hist <-plot_grid(sex_a,sex_c,sex_t, 
-        labels=c('A','B','C'), nrow=1,
-    label_x=0.2)
-sex_hist
-
-#Saving this figure to use in our paper 
-##ggsave("Paper_figures/Figure_sex.png", plot = sex_hist, 
-     ## width = 10, height = 6, dpi = 300)
-
-```
-
-```{r}
-############# ANCOVA ANALYSIS ####################
-
-#### creating a new dataframe to get abdomen/carapace ratio in male/female dataframe
-### covariate = total length
-### dependent variable = ratio
-
-mf_ratio<-mf_prawn %>%
-  mutate(abdomen_carapace_ratio = abdominal_length.mm./carapace_length.mm.)
-
-#### summary statistics for dependent variable abdomen/carapace ratio
-mf_ratio %>%
-  group_by(sex) %>%
-  get_summary_stats(abdomen_carapace_ratio, type= "common")
-
-#### summary stats for covariate TOTAL
-mf_ratio %>%
-  group_by(sex) %>%
-  get_summary_stats(total_length.mm., type= "common")
-
-
-##### visualizing the dataset
-p1 <- ggplot(mf_ratio, aes(total_length.mm., abdomen_carapace_ratio, colour = sex)) +
-  geom_point(size=3) +
-  theme(legend.position = "top")
-p2 <- ggplot(mf_ratio, aes(x = sex, y = abdomen_carapace_ratio, colour = sex)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(width = 0.2) +
-  theme(legend.position = "top")
-p3 <- ggplot(mf_ratio, aes(x = sex, y = total_length.mm., fill = sex)) +
-  geom_boxplot(outlier.shape = NA) +
-  geom_jitter(width = 0.2) +
-  theme(legend.position = "top")
-grid.arrange(p1,p2,p3, ncol=3)
-
-#### one-way ANCOVA test
-
-anova_test(data = mf_ratio, formula = abdomen_carapace_ratio ~ total_length.mm. + sex, type = 3, detailed = TRUE) ###type 3 SS = ANCOVA
-```
-
 
 ```{r}
 ################# LM for how A:C ratio varies with total length and sex (???) ###############
@@ -724,11 +546,13 @@ summary(mod)
 
 
 ```{r}
-total_ac_ratio<-ggplot(mf_ratio, aes(x = abdomen_carapace_ratio, y = total_length.mm., color = sex)) +
+total_ac_ratio<-ggplot(mf_ratio, aes(x = total_length.mm., y = abdomen_carapace_ratio, color = sex)) +
   geom_point() +
   geom_smooth(method="lm") +
-  labs(x = "Abdomen:Carapace ratio", y = "Total Length (mm)", Color = "Sex") +
+  labs(y = "Abdomen:Carapace ratio", x = "Total Length (mm)", Color = "Sex") +
   theme_classic() 
+
+total_ac_ratio
 
 ggsave("Paper_figures/Figure_total_acratio.png", plot = total_ac_ratio, 
      width = 10, height = 6, dpi = 300)
