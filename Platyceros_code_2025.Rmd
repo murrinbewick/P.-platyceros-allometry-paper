@@ -243,7 +243,7 @@ multi_panel <-plot_grid(plot_c_t, plot_a_t, plot_c_a,
 multi_panel
 
 #Saving this figure to be used in our paper 
-ggsave("Paper_figures/Figure_3.png", plot = multi_panel, width = 7, height = 15, dpi = 300)
+ggsave("Paper_figures/Figure_3.png", plot = multi_panel, width = 7, height = 10, dpi = 300)
 ```
 
 ##**Splitting populations to analyze sites separately**
@@ -535,27 +535,45 @@ prawn_coords_raw$eastward_velocity <- raster::extract(
 
 ```{r}
 ################# LM for how A:C ratio varies with total length and sex (???) ###############
-mod <- lm(abdomen_carapace_ratio ~ total_length.mm. * sex, data = mf_ratio) 
+mf_prawn <- read.csv(file = here("MFprawn.csv"))
+mf_prawn
+
+#Making an abdomen / carapace ratio column in the sex - separated data sheet 
+sex_ratio_prawn<-mf_prawn%>%
+  mutate(abdomen_carapace_ratio = abdominal_length.mm./carapace_length.mm.)
+
+sex_ratio_prawn
+
+mod <- lm(abdomen_carapace_ratio ~ total_length.mm. * sex, data = sex_ratio_prawn) 
 summary(mod)
 ```
 ```{r}
 ############## Simplified LM since interaction term (total - sex) is insignificant ############
-mod_simple <- lm(abdomen_carapace_ratio ~ total_length.mm. + sex, data = mf_ratio)
+mod_simple <- lm(abdomen_carapace_ratio ~ total_length.mm. + sex, data = sex_ratio_prawn)
 summary(mod)
 ```
 
 
 ```{r}
-total_ac_ratio<-ggplot(mf_ratio, aes(x = total_length.mm., y = abdomen_carapace_ratio, color = sex)) +
+total_ac_ratio<-ggplot(sex_ratio_prawn, aes(x = total_length.mm., y = abdomen_carapace_ratio, color = sex)) +
   geom_point() +
   geom_smooth(method="lm") +
-  labs(y = "Abdomen:Carapace ratio", x = "Total Length (mm)", Color = "Sex") +
+  labs(y = "Abdomen / Carapace Ratio", x = "Total Length (mm)", Color = "Sex") +
   theme_classic() 
 
 total_ac_ratio
 
-ggsave("Paper_figures/Figure_total_acratio.png", plot = total_ac_ratio, 
-     width = 10, height = 6, dpi = 300)
+
+ratio_plots_combine <-plot_grid(site_compare, total_ac_ratio,
+        labels=c('A','B'),
+    label_x=0.15,
+    ncol=1, 
+    align="v",
+    rel_heights=c(1,1,1))
+ratio_plots_combine
+
+ggsave("Paper_figures/Figure_5.png", plot = ratio_plots_combine, 
+     width = 10, height = 8, dpi = 300)
 ```
 
 
