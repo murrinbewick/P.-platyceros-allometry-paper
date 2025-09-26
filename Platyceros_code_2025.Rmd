@@ -195,7 +195,7 @@ plot(simulateResiduals(lm_v_t))
 plot_c_t <- ggplot(raw_prawn, (aes(x=log_t_length, y=log_carapace))) + 
   geom_point() +
   geom_abline(intercept=-1.45070,slope=1, colour="red",linewidth=0.8) + 
-  geom_abline(intercept=-1.45070,slope=1.04650, colour="green",linewidth=0.8) +
+  geom_abline(intercept=-1.45070,slope=1.04650, colour="springgreen3",linewidth=0.8) +
   geom_abline(intercept=-1.45070, slope=1.007174, colour="grey")+
   geom_abline (intercept=-1.45070, slope=1.085835, colour="grey") +
   scale_x_continuous(expand = c(0, 0), limits = c(4.2, 5.3)) +
@@ -245,6 +245,65 @@ multi_panel
 #Saving this figure to be used in our paper 
 ggsave("Paper_figures/Figure_3.png", plot = multi_panel, width = 7, height = 10, dpi = 300)
 ```
+
+##Making Figure 3 Grey Scale Version 
+```{r}
+plot_c_t <- ggplot(raw_prawn, (aes(x=log_t_length, y=log_carapace))) + 
+  geom_point() +
+  geom_abline(intercept=-1.45070,slope=1, linetype="dashed",linewidth=0.8) + 
+  geom_abline(intercept=-1.45070,slope=1.04650,linewidth=0.8) +
+  geom_abline(intercept=-1.45070, slope=1.007174, linetype="dotted")+
+  geom_abline (intercept=-1.45070, slope=1.085835, linetype="dotted") +
+  scale_x_continuous(expand = c(0, 0), limits = c(4.2, 5.3)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(2.7, 4)) +
+  xlab("Ln(total length)") +
+  ylab("Ln(carapace length)") +
+  theme_classic()
+  plot_c_t
+  
+#Plotting abdomen vs total length
+plot_a_t <- ggplot(raw_prawn, (aes(x=log_t_length, y=log_abdomen))) + 
+  geom_point() +
+  geom_abline(intercept=-0.07982,slope=1, linetype="dashed",linewidth=0.8) + 
+  geom_abline(intercept=-0.07982,slope=0.94725,linewidth=0.8) +
+  geom_abline(intercept=-0.07982,slope=0.9199612, linetype="dotted")+
+  geom_abline (intercept=-0.07982,slope=0.97453519, linetype="dotted") +
+  scale_x_continuous(expand = c(0, 0), limits = c(4.25, 5.25)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(3.75, 5)) +
+  xlab("Ln(total length)") +
+  ylab("Ln(abdomen length)") +
+  theme_classic()
+  plot_a_t
+  
+#Plotting carapace vs abdomen 
+plot_c_a <- ggplot(raw_prawn, (aes(x=log_abdomen, y=log_carapace))) + 
+  geom_point() +
+  geom_abline(intercept=-1.48653,slope=1, linetype="dashed",linewidth=0.8) + 
+  geom_abline(intercept=-1.48653,slope=1.13218, linewidth=0.8) +
+  geom_abline(intercept=-1.48653, slope=1.083341, linetype="dotted")+
+  geom_abline (intercept=-1.48653, slope=1.181016, linetype="dotted") +
+  scale_x_continuous(expand = c(0, 0), limits = c(3.75, 5.25)) +
+  scale_y_continuous(expand = c(0, 0), limits = c(2.5, 4.5)) +
+  xlab("Ln(abdomen length)") +
+  ylab("Ln(carapace length)") +
+  theme_classic()
+  plot_c_a
+  
+#Combining these 3 plots into one multi-panel plot  
+multi_panel <-plot_grid(plot_c_t, plot_a_t, plot_c_a,
+        labels=c('A','B','C'),
+    label_x=0.15,
+    ncol=1, 
+    align="v",
+    rel_heights=c(1,1,1))
+multi_panel
+
+#Saving this figure to be used in our paper 
+ggsave("Paper_figures/Figure_3_greyscale.png", plot = multi_panel, width = 7, height = 10, dpi = 300)
+```
+```
+
+
 
 ##**Splitting populations to analyze sites separately**
 ```{r}
@@ -573,7 +632,7 @@ ratio_plots_combine <-plot_grid(site_compare, total_ac_ratio,
 ratio_plots_combine
 
 ggsave("Paper_figures/Figure_5.png", plot = ratio_plots_combine, 
-     width = 10, height = 8, dpi = 300)
+     width = 10, height = 8, dpi = 305)
 ```
 
 
